@@ -49,4 +49,24 @@ let currentNumber = 0;
 let previousNumber = 0;
 let currentOperator = "";
 
+const numberButtons = document.querySelectorAll(".numbers button");
+
+numberButtons.forEach(button => button.addEventListener('click', addNumberToScreen));
+
+const screen = document.querySelector(".screen-panel");
+
+function addNumberToScreen(event) {
+    let selectedNumber = event.target.textContent;
+    let currentNumber =  screen.textContent;
+
+    if (parseInt(currentNumber) / 1000000000 > 1) {
+        return
+    } else if (currentNumber === "0") {
+        screen.textContent = selectedNumber;
+    } else {
+        screen.textContent += selectedNumber;
+    }
+}
+
+
 
