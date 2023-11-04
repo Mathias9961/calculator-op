@@ -96,6 +96,14 @@ function addOperationToScreen(event) {
         inputs=[];
     }
 
+    //If clear is clicked, remove all stored values and start over
+    if (operationType === "C") {
+        numberSaved = true;
+        currentScreenText = "";
+        inputs=[];
+        screen.textContent = "0";
+    }
+
 }
 
 function getArrayResult() {
