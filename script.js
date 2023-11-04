@@ -20,18 +20,18 @@ function divide(num1, num2) {
 
 //Applies the right operation to num 1 and num2 based on the operator
 function operate(num1, num2, operator) {
-    let result = "Error processing your operation";
+    let result = "!Err0r";
     switch (operator) {
-        case "sum":
+        case "+":
             result = add(num1, num2);
             break;
-        case "subtract":
+        case "-":
             result = subtract(num1, num2);
             break;
-        case "multiply":
+        case "*":
             result = multiply(num1, num2);
             break;
-        case "divide":
+        case "/":
             result = divide(num1, num2);
             break;
     }
@@ -57,16 +57,41 @@ const screen = document.querySelector(".screen-panel");
 
 function addNumberToScreen(event) {
     let selectedNumber = event.target.textContent;
-    let currentNumber =  screen.textContent;
+    currentNumber = parseFloat(screen.textContent);
 
-    if (parseInt(currentNumber) / 1000000000 > 1) {
+    if (currentNumber / 1000000000 > 1) {
         return
-    } else if (currentNumber === "0") {
+    } else if (currentNumber === 0) {
         screen.textContent = selectedNumber;
     } else {
         screen.textContent += selectedNumber;
     }
+
+    currentNumber = parseFloat(screen.textContent);
 }
 
+const operatorButtons = document.querySelectorAll(".operators button");
 
+operatorButtons.forEach(button => button.addEventListener('click', runOperation));
+
+function runOperation(event) {
+    let operationType = event.target.textContent;
+    console.log("Operation: " + operationType);
+
+    console.log("PrevNumber: " + previousNumber);
+    console.log("Current Number: " + currentNumber);
+
+    if (previousNumber === 0) {
+        console.log("No prev number, setting it to: " + currentNumber);
+        previousNumber = currentNumber;
+        screen.textContent = 0;
+        return
+    }
+
+    let result = operate(previousNumber, currentNumber, operationType);
+
+    console.log("Result: " + result);
+    screen.textContent = result;
+
+}
 
