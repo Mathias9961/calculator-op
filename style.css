@@ -4,7 +4,7 @@
     align-items: center;
     justify-content: center;
     margin: 5rem auto;
-    width: fit-content; 
+    /* width: fit-content;  */
     background-color: rgb(175, 172, 172);
 }
 

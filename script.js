@@ -45,9 +45,10 @@ function toFixedIfNecessary( value, dp ){
 }
 
 const MAX_DECIMALS = 10;
-let currentNumber = 0;
-let previousNumber = 0;
-let currentOperator = "";
+let currentNumber = "";
+let numberSaved = true;
+let currentScreenText = "";
+let inputs = [];
 
 const numberButtons = document.querySelectorAll(".numbers button");
 
@@ -57,41 +58,77 @@ const screen = document.querySelector(".screen-panel");
 
 function addNumberToScreen(event) {
     let selectedNumber = event.target.textContent;
-    currentNumber = parseFloat(screen.textContent);
 
-    if (currentNumber / 1000000000 > 1) {
-        return
-    } else if (currentNumber === 0) {
+    if (numberSaved === true) {
+        currentNumber = selectedNumber;
+    } else {
+        currentNumber += selectedNumber;
+    }
+
+    if (currentScreenText === "") {
         screen.textContent = selectedNumber;
     } else {
         screen.textContent += selectedNumber;
     }
 
-    currentNumber = parseFloat(screen.textContent);
+    currentScreenText = screen.textContent;
+    numberSaved = false;
 }
 
 const operatorButtons = document.querySelectorAll(".operators button");
 
-operatorButtons.forEach(button => button.addEventListener('click', runOperation));
+operatorButtons.forEach(button => button.addEventListener('click', addOperationToScreen));
 
-function runOperation(event) {
+function addOperationToScreen(event) {
+
     let operationType = event.target.textContent;
-    console.log("Operation: " + operationType);
 
-    console.log("PrevNumber: " + previousNumber);
-    console.log("Current Number: " + currentNumber);
+    inputs.push(currentNumber);
+    inputs.push(operationType);
+    numberSaved = true;
 
-    if (previousNumber === 0) {
-        console.log("No prev number, setting it to: " + currentNumber);
-        previousNumber = currentNumber;
-        screen.textContent = 0;
-        return
+    screen.textContent += " " + operationType + " ";
+
+    if (operationType === "=") {
+        screen.textContent = getArrayResult();
+        numberSaved = true;
+        currentScreenText = "";
+        inputs=[];
     }
-
-    let result = operate(previousNumber, currentNumber, operationType);
-
-    console.log("Result: " + result);
-    screen.textContent = result;
 
 }
 
+function getArrayResult() {
+
+    let runningTotal = 0;
+    let currentOperator = "";
+    let newNumber = 0;
+
+    for (let i = 0; i < inputs.length; i++) {
+        //Check if it's the first entry of the array
+        let currentItem = inputs[i];
+        console.log("Evaluating: " + currentItem);
+
+
+        if (i === 0) {
+            //If it is, add the first number value to the running total and go the the next value
+            runningTotal += parseFloat(currentItem);
+            console.log("Starting running total: " + runningTotal);
+            continue;
+        } 
+
+        //If the array entry is even, then it's a number. Use the last operator and running total with it
+        if (i % 2 === 0) {
+            console.log(`Operating: ${runningTotal} ${currentOperator} ${currentItem}`);
+            runningTotal = operate(runningTotal, parseFloat(currentItem), currentOperator);
+            console.log(`Result: ${runningTotal}`);
+        }
+        
+        //If the array entry is odd, then it's an operator
+        if (i % 2 !== 0) {
+            currentOperator = currentItem;
+        }
+    }
+
+    return runningTotal;
+}
